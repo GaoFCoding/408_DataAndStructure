@@ -1,10 +1,12 @@
 #include<stdio.h>
 #include<malloc.h>
 #define MaxVertexNum 10
+#define MaxArcNum = 10
 
 /*
     邻接矩阵法
 */
+int ArcList[MaxArcNum]; //声明一个数组用于存放图G中的边的序号
 
 typedef struct 
 {
@@ -34,6 +36,28 @@ typedef struct
     AdjList List; //邻接表
     int vexNum, arcNum; //图的顶点数和弧数
 } ALGraph; //ALGraph是邻接表存储的图类型
+
+
+/*
+    *****基本操作的声明*****
+    
+    ps：考试的时候以下接口可直接调用！
+*/
+
+bool Adjacent(MGraph g, int x, int y); //判断图G是否存在边X，Y
+bool Neighbors(MGraph g, int x, int ArcList[]); //列出图G中与结点x邻接的边
+bool InsertVertex(MGraph &g, int x); //从图中插入结点x
+bool DeleteVertex(MGraph &g, int x); //从图中删除顶点x
+bool AddEdge(MGraph &g, int x, int y); //若无向边（x,y）或有向边不存在，则向图中添加该边
+bool Remove(MGraph &g, int x, int y); //若无向边（x,y）或有向边存在，则删除该边
+int FirstNeighbor(MGraph g, int x); //求图中顶点x的第一个邻接点，若有则返回顶点号，没有则返回-1 *
+int NextNeighbor(MGraph g, int x, int y); //y是x的一个邻近点，返回y的下一个邻接点的顶点号，无则返回-1 *
+float Get_edge_value(MGraph g, int x, int y); //返回边（x，y）的权值
+bool Set_edge_value(MGraph &g, int x, int y, int v) //设置图中边（x，y）的对应的权值
+
+/*
+    *****基本操作的实现*****
+*/
 
 //FirstNetghbor
 //返回图中顶点x的第一个邻接点，若有则返回顶点号，若没有邻接点或者x顶点不存在则返回-1
