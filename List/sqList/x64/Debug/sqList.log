@@ -1,0 +1,16 @@
+﻿  sqList.c
+D:\workSpace\C\sqList\sqList.c(117,4): warning C4033: “FindByNum”必须返回值
+D:\workSpace\C\sqList\sqList.c(136,26): warning C4013: “malloc”未定义；假设外部返回 int
+D:\workSpace\C\sqList\sqList.c(136,60): warning C4312: “类型强制转换”: 从“int”转换到更大的“ElemType *”
+D:\workSpace\C\sqList\sqList.c(145,76): warning C4312: “类型强制转换”: 从“int”转换到更大的“ElemType *”
+D:\workSpace\C\sqList\sqList.c(151,2): warning C4013: “free”未定义；假设外部返回 int
+D:\workSpace\C\sqList\sqList.c(170,27): warning C4047: “函数”:“sqList_Static *”与“Status (__cdecl *)(sqList_Static *)”的间接级别不同
+D:\workSpace\C\sqList\sqList.c(170,12): warning C4024: “FindByNum”: 形参和实参 1 的类型不同
+D:\workSpace\C\sqList\sqList.c(54): warning C4716: “InitStaticList”: 必须返回一个值
+D:\workSpace\C\sqList\sqList.c(84): warning C4715: “InsertNum”: 不是所有的控件路径都返回值
+D:\workSpace\C\sqList\sqList.c(102): warning C4715: “DeleteNum”: 不是所有的控件路径都返回值
+D:\workSpace\C\sqList\sqList.c(108): warning C4716: “FindByIndex”: 必须返回一个值
+D:\workSpace\C\sqList\sqList.c(120): warning C4716: “FindByNum”: 必须返回一个值
+D:\workSpace\C\sqList\sqList.c(152): warning C4716: “IncreaseSize”: 必须返回一个值
+D:\workSpace\C\sqList\sqList.c(139): warning C4716: “InitDynamicList”: 必须返回一个值
+  sqList.vcxproj -> D:\workSpace\C\sqList\x64\Debug\sqList.exe
