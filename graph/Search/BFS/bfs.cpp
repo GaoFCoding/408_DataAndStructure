@@ -46,7 +46,7 @@ bool IsEmpty(LinkQueue q); //判断是否为空
 
 bool Visit(int v); //访问元素
 
-/***********BFS算法***********/ 
+/***********BFS算法***********/
 
 typedef bool visited[MaxVertexNum]; //标记数组类型声明
 
@@ -96,6 +96,52 @@ void BFS(MGraph g, LinkQueue &q, visited &visitList, int v)
         }
     }
 }
+
+/****************BFS最短路径优先*******************/
+/*
+    对无向图的最短路径优先算法可以从其BFS（广度优先算法）
+    加以改进来实现，本质上还是BFS算法，只适用于无权图
+
+    思想：
+        声明两个数组 d[] path[] 分别存储各顶点到源顶点的边数、BFS遍历各顶点的直接前驱
+        其他与BFS无异
+
+*/
+int d[MaxVertexNum]; //声明d数组,存储各节点到起始顶点的距离
+int path[MaxVertexNum]; //声明path数组，存储各顶点的直接前驱
+
+void BFS_MIN_Distance(MGraph g, LinkQueue &q, visited &visitList, int v)
+{
+    for (int i = 0; i < MaxVertexNum; i++) //初始化辅助数组
+    {
+        d[i] = 1000; //初始化各顶点到起始顶点距离为无穷大，这里用一个比较大的数意思意思
+        path[i] = -1; //最短路径从哪个顶点过来
+    }
+    
+    d[v] = 0; //起始顶点到自身的距离为0
+
+    Visit(v); //先访问初始顶点
+    visitList[v] = true;
+
+    Enqueue(q, v); //初始顶点入队
+    
+    while (!IsEmpty(q))
+    {
+        Dequeue(q, v); //队首顶点出队
+        for (int w = FirstNeighbor(g, v); w >= 0; w = NextNeighbor(g, v, w)) //检测与v相邻的顶点
+        {
+            if (!visitList[w]) //判断之前是否已经访问过
+            {
+                d[w] = d[v] + 1; //更新当前顶点到起始顶点的距离，为上一顶点到起始的距离 + 1
+                path[w] = v; //更新当前顶点的前驱顶点，即为上一个顶点
+                Enqueue(q, w); //相邻的顶点依次入队
+                Visit(w); //访问这些顶点元素
+                visitList[w] = true; //更改标记数组
+            }
+        }
+    }
+}
+
 
 int main()
 {
