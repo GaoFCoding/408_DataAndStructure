@@ -2,6 +2,18 @@
 #include<malloc.h>
 #define MaxVertexNum 100
 
+/*
+    关键路径
+
+    AOE网
+    
+        在带权图中，以顶点表示事件，以有向边表示活动，以边上的权值表示完成该活动
+        的开销。称之为用边表示活动的网络，简称AOE网。
+        
+        AOE网和AOV网都是有向无环图
+        
+*/
+
 //图的邻接表存储结构声明
 typedef struct ArcNode
 {  
