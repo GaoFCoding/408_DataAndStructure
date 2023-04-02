@@ -35,7 +35,7 @@ void Merge(int list[], int low, int mid, int high)
         k++;
         i++;
     }
-    while (j<=mid) //将右边序列剩余的加入list
+    while (j<=high) //将右边序列剩余的加入list
     {
         list[k] = list[j];
         k++;
