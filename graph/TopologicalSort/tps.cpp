@@ -125,11 +125,11 @@ bool TopologicalSort(ALGraph g)
 }
 
 /*
-    2. BFS实现逆序的拓扑排序
+    2. DFS实现逆序的拓扑排序
 */
 bool visited[MaxVertexNum];
 
-void BFS_Traverler(ALGraph g)
+void DFS_Traverler(ALGraph g)
 {
     for (int i = 0; i < g.vexNum; i++) //初始化visited数组
     {
@@ -140,12 +140,12 @@ void BFS_Traverler(ALGraph g)
     {
         if (!visited[i])
         {
-            BFS(g, i);
+            DFS(g, i);
         }
     }
 }
 
-void BFS(ALGraph g, int cur)
+void DFS(ALGraph g, int cur)
 {
     visited[cur] = true;
 
@@ -153,7 +153,7 @@ void BFS(ALGraph g, int cur)
     {
         if (!visited[w])
         {
-            BFS(g, w);    
+            DFS(g, w);
         }
     }
 
