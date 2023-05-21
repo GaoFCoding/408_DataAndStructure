@@ -369,12 +369,12 @@ bool FindTargetElem(SqList &sq, ElemType target)
         }
     }
 
-    //l即为要插入的位置
+    //l即为要插入的位置，应该将包括l的后面所有元素往后面移一位
     for (int i = sq.Length-1; i >= l; i--) //左移+插入元素
     {
-        sq.Data[i] = sq.Data[i-1];
+        sq.Data[i+1] = sq.Data[i];
     }
-    sq.Data[l-1] = target; //插入数据
+    sq.Data[l] = target; //插入数据
 
     return true;
 }

@@ -17,13 +17,13 @@ typedef struct Node {
 //初始化静态链表
 bool InitSpace_SL(SlinkList &SL)
 {
-	for (int i = 0; i < MaxSize - 1; i++) 
+	for (int i = 0; i < MaxSize-1; i++) 
 	{
 		SL[i].next = i+1;
 		SL[i].data = 0;		
 	}
-	SL[MaxSize - 1].next = 0; //最后一个元素指向头元素
-	SL[MaxSize - 1].data = 0;
+	SL[MaxSize-1].next = 0; //最后一个元素指向头元素
+	SL[MaxSize-1].data = 0;
 
 	return true;
 }
