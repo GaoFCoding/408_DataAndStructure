@@ -441,8 +441,73 @@ LinkList FindCommonNode(LinkList &L1, LinkList &L2)
 
 /*
     方法2：
+        链表对齐思想。
+        分别遍历两个链表得到他们的长度，并求出两个长度的差，在长度较长的链表上先遍历长度之差个节点后，再同步遍历两个链表，
+        直到找到相同的节点
 
+        时间复杂度:O(n)
+
+        空间复杂度：O（1）
 */
+
+int Len(LinkList list) //求链表的长度
+{
+    LNode *p = list;
+    int len = 0;
+
+    while (p != NULL)
+    {
+        p = p->next;
+        len++;
+    }
+    
+    return len;
+}
+
+LinkList FindCommonNode2(LinkList &L1, LinkList &L2)
+{
+    LNode *p1 = L1->next;
+    LNode *p2 = L2->next; //工作节点
+    int len1 = Len(L1), len2 = Len(L2);
+    int dis; //表长差
+
+    //对齐
+    if (len1 > len2) //L1比L2长
+    {
+        dis = len1 - len2;
+        while (dis)
+        {
+            p1 = p1->next;
+            dis--;
+        }
+    }
+
+    if (len1 < len2)
+    {
+        dis = len2 - len1;
+        while (dis)
+        {
+            p2 = p2->next;
+            dis--;
+        }
+    }
+
+    while (p1 != NULL) // or p2 != null
+    {
+        if (p1 == p2)
+        {
+            return p1;
+        }
+
+        p1 = p1->next;
+        p2 = p2->next; //同步遍历
+    }
+    
+    return NULL; //找不到公共节点链
+
+}
+
+
 
 /*
     9. 给定一个带表头的单链表，设head为头指针，节点结构为(data,next)，data为整型元素，next为指针
@@ -722,53 +787,462 @@ LinkList CreateListC(LinkList A, LinkList B)
 
 /*
     15. 已知两个链表A和B分别表示两个集合，其元素递增排序。编制函数，求A和B的交集，并存放在A链表中
+
+    算法设计：
+
+        暴力法：
+            遍历A链表，每遍历一个元素便完整地遍历B链表，若能找到B中一个元素与A中当前元素相同，说明是交集，保留并遍历下一个
+            ，若找不到，则说明不是交集元素，从A中删除。并且在遍历A的同时删除A中重复的元素。
+
+    时间复杂度：O（n^2）
+
+    空间复杂度：O(1)
+*/
+
+void GetSameEelements(LinkList &A, LinkList &B)
+{
+    LNode *p = A->next; //工作指针
+    LNode *pb = B->next;
+    LNode *pre = A; //p的前驱
+    LNode *r;
+
+    while (p != NULL)
+    {
+        r = p->next;
+        if (p->data == pre->data) //若当前p指向的节点元素与前一个节点元素相同，则删除该节点
+        {
+            pre->next = p->next;
+            free(p);
+
+            p = r;
+            continue;
+        }
+        
+        pb = B->next;
+        while (pb != NULL && pb->data != p->data)
+        {
+            pb = pb->next;
+        }
+
+        if (pb == NULL) //未找到与A中当前节点相同的元素，则删除A中的该元素
+        {
+            pre->next = p->next;
+            free(p);
+            
+            p = r;
+            continue;
+        }
+        
+        pre = pre->next;
+        p = r;
+    }
+
+}
+
+/*
+    解法2:
+        设计思想：
+
+        时间复杂度：
+
+        空间复杂度：
+
 */
 
 
 
+/*
+    16. 两个整数序列A = a1,a2,a3,...am和B = b1,b2,...bn已经存入两个单链表中，设计一个算法，判断
+    序列B是否是序列A的连续子序列
+*/
+
+/*
+    算法设计：
+
+        暴力法：
+            遍历A，每当遇到与B中第一个元素值相同的节点时，开始逐一对比A和B当前位置。若能完全匹配，则返回true，
+            若不能完全匹配，则A继续往后遍历，重复上面操作。
+            
+    时间复杂度：O(n^2)
+
+    空间复杂度：O(1)
+
+*/
+
+bool CompareA_B(LinkList &A, LinkList &B)
+{
+    LNode *pa = A->next;
+    LNode *pb = B->next; //AB工作节点
+    LNode *temp;
+    int s = B->next->data; //存储B的第一个元素
 
 
+    while (pa != NULL)
+    {
+        if (pa->data != s) 
+        {
+            pa = pa->next;
+        }
+        else //匹配上第一个元素
+        {
+            temp = pa;
+            while (temp != NULL && pb != NULL && temp->data == pb->data) //逐位比较
+            {
+                temp = temp->next;
+                pb = pb->next;
+            }
+
+            if (pb == NULL) //说明完全匹配上了，为子序列
+            {
+                return true;
+            }    
+        }
+    }
+
+    return false;
+}
+
+/*
+    22. 【2009全国统考真题】
+
+    已知一带头节点的单链表，设计一个算法，查找链表中倒数第k个位置上的结点，若查找成功，算法输出该节点的data值，并返回1，否则返回0
+
+    算法设计：
+        1. 设置两个指针p1,p2和一个计数器count，p1先遍历单链表，p1每遍历一次就count++，当count == k 时，p2开始跟p1同步遍历，当p1遍历结束时，p2的位置就是倒数
+        第K个位置，输出data值，返回1，若count的值小于k，说明不存在倒数第k个节点，返回0；
+
+    时间复杂度：O（n）
+
+    空间复杂度：O(1)
+    
+*/
+bool FindLastKElement(LinkList &L, int k)
+{
+    LNode *p1 = L->next;
+    LNode *p2 = L->next;
+    int count = 0;
+
+    while (p1 != NULL)
+    {
+        p1 = p1->next;
+
+        if (count != k)
+        {
+            count++;
+        }
+        else
+        {
+            p2 = p2->next;
+        }
+    }
+
+    if (count == k) //说明不存在倒数第K个节点（链表不够长）
+    {
+        printf("number %d , data is %d ", k, p2->data);
+        return true;
+    }
+
+    printf(" %d not found", k);
+    return false;
+   
+}
+
+/*
+    23. 【2012统考真题】假定采用带头节点的单链表保存单词，当两个单词有相同的后缀时，可共享
+    相同的后缀存储空间，设str1和str2分别指向两个单词所在单链表的头节点，设计一个算法，找出
+    str1和str2所指向的两个链表共同后缀的起始位置。
+*/
+
+/*
+    解法1.
+        暴力法，本质上是找出公共节点的起始位置，遍历链表Str1，每遍历一个元素就遍历一遍Str2，直到找到共用存储空间的节点
+        （指针指向同一地址）
+
+        时间复杂度：
+            O（n^2）
+        空间复杂度：
+            O (1)
+*/
+typedef struct Node
+{
+    char data;
+    struct Node *next;
+} SNode;
 
 
+SNode* FindIndexOfShareSpace(SNode *str1, SNode* str2)
+{   
+    SNode *p1 = str1->next;
+    SNode *p2 = str2->next;
 
+    while (p1 != NULL)
+    {
+        while (p2 != NULL)
+        {
+            if (p1 == p2) //若为公共节点
+            {
+                return p1;
+            }
+            
+            p2 = p2->next;
+        }
 
+        p1 = p1->next;
+        
+    }
+    
+    return NULL; //若找不到则返回Null
+}
+
+/*
+    解法二：
+        双指针法，用指针p、q分别扫描str1和str2，用p,q分别扫描str1,str2，当p,q指向同一地址时，即找到了共同后缀的起始位置
+
+        1. 分别求出str1和str2所指向的两个链表的长度m和n
+        2. 将两个链表尾对齐
+        3. 反复将指针p和q同步向后移动，当p，q指向同一位置时停止，即为共同后缀的起始位置，算法结束
+*/
+
+int Length(SNode *list) //求链表的长度
+{
+    SNode *p = list;
+    int len = 0;
+
+    while (p != NULL)
+    {
+        p = p->next;
+        len++;
+    }
+    
+    return len;
+}
+
+SNode* Find_addr(SNode *L1, SNode *L2)
+{
+    SNode *p1 = L1->next;
+    SNode *p2 = L2->next;
+    int len1 = Length(L1), len2 = Length(L2);
+    int dis;
+
+    if (len1 > len2)
+    {
+        dis = len1 - len2;
+        while (dis)
+        {
+            p1 = p1->next;
+        }
+        dis--;
+    }
+
+    if (len2 > len1)
+    {
+        dis = len2 - len1;
+        while (dis)
+        {
+            p2 = p2->next;   
+        }
+        dis--;
+    } //完成对齐
+    
+    while (p1 != NULL)
+    {
+        if (p1 == p2)
+        {
+            return p1;
+        }
+    }
+    
+    return NULL; //找不到公共后缀节点
+
+}
+
+/*
+    24. 【2015统考真题】
+    用单链表保存m个整数，节点的结构为[data][link]，且[data]<=n (n为正整数)，现要求设计一个时间复杂度尽可能高效的算法，对于
+    链表中data的绝对值相等的节点，仅保留第一次出现的节点而删除其余绝对值相等的节点。例如：
+        给定的单链表的head如下：
+            head ——— 21 ———— -15 ———— -15 ———— -7 ———— 15
+        则删除节点后的head为：
+            head ——— 21 ———— -15 ———— -7
+
+*/
+
+/*
+    1. 暴力法
+        遍历链表中的每一个节点，每遍历一个节点，就遍历他所有的后序节点，将所有与其绝对值相同的节点都删除
+
+    时间复杂度：O（n^2）
+
+    空间复杂度：O（1）
+*/
+
+int abs(int num)
+{
+    if (num < 0)
+    {
+        num = -num;
+    }
+    return num;
+}
+
+void DeleteAbsSameElem(LinkList &list)
+{
+    LNode *pre; //cur的前驱节点
+    LNode *p = list->next; //工作节点
+    LNode *cur; //遍历p之后的节点
+    LNode *r;
+
+    while (p != NULL)
+    {
+        cur = p->next;
+        pre = p;
+        while (cur != NULL)
+        {
+            r = cur->next;
+            if (abs(cur->data) == abs(p->data)) //后序节点存在与p的绝对值相同的元素则删除
+            {
+                pre->next = cur->next;
+                free(cur);
+                cur = r;
+                continue;
+            }
+
+            pre = pre->next;
+            cur = r;
+        }
+        
+        p = p->next;
+    }    
+}
+
+/*
+    解法2.
+        空间换时间，使用辅助数组记录链表中已出现的数值，从而只需对链表进行一趟扫描
+        |data|<=n ，辅助数组大小为n+1(1到n，包括n)，各元素初始值为0，依次扫描链表中的每一个节点，
+        同时检测q[|data|]的值，若为0则保留该节点，并令q[|data|]=1，否则将该节点从链表中删除。
+
+    时间复杂度：O（n）
+
+    空间复杂度：O(n) //需要辅助数组
+*/
+void DeleteAbsSameElem2(LinkList &list, int n) //n为辅助数组的长度
+{
+    LNode *p = list->next; //工作指针
+    LNode *pre = list; //前驱节点指针
+    LNode *r;
+
+    int *record = (int *)malloc(sizeof(int)*(n+1)); //初始化一个长度为n+1的数组用于存放data的记录
+    for (int i = 1; i < n+1; i++) //只需要后n个
+    {
+        record[i] = 0;
+    }
+    
+    while (p != NULL)
+    {
+        r = p->next;
+        if (record[abs(p->data)]) //若存在，则删除
+        {
+            pre->next = r;
+            free(p);
+            p = r;
+            continue;
+        }
+
+        record[abs(p->data)] = 1;
+        pre = pre->next;
+        p = p->next;
+    }
+
+}
+
+/*
+    25. 【2019】统考真题
+
+    设线性表L = (a1,a2,a3,...an-2,an-1,an)采用带头节点的单链表保存，设计一个空间复杂度为O（1）且时间复杂度尽可能高的算法，
+    重新排列L中的各个节点，得到线性表L' = (a1,an,a2,an-1,a3,an-2,...)
+
+    算法设计：
+        先找到链表中中间节点，将中间结点的后半部分逆置，再其交替地插入到前半部分
+    时间复杂度：O（n）
+
+    空间复杂度：O（1）
+*/
+
+LNode* FindMidNode(LinkList &list) //寻找链表中间节点（快慢指针）
+{
+    LNode *p1 = list->next; //快指针
+    LNode *p2 = list->next; //慢指针
+    int count = 0; //tag
+
+    while (p1 != NULL)
+    {
+        if (count == 2)
+        {
+            p2 = p2->next;
+            count = 0;
+        }
+
+        count++;
+        p1 = p1->next;
+    }
+    
+    return p2;
+}
+
+void PartlyReverse(LinkList &list)
+{
+    LNode *p1 = list->next;
+    LNode *p2 = FindMidNode(list); //p2为中间节点指针
+    LNode *r;
+
+    //逆置后半部分
+    LNode *cur = p2->next;
+    p2->next = NULL; //保证逆置后的后半段链表尾为NULL
+    while (cur != NULL) //实现后半部分的逆置
+    {
+        r = cur->next;
+        cur->next = p2->next;
+        p2->next = cur;
+        cur = r;
+    }
+
+    //交替地插入到前半部分
+    cur = p2->next; //cur指向后半段的第一个数据节点
+    p2->next = NULL; //保证插入完成后链表尾部为NULL
+    while (cur != NULL)
+    {
+        r = cur->next;
+        cur->next = p1->next;
+        p1->next = cur; //完成插入
+
+        p1 = cur->next; //指向下一个插入点
+        
+        cur = r;
+    }
+}
+
+/*
+    总结要点：
+        1. 快慢指针法求链表的中间节点
+        2. 头插法逆置带头节点的链表
+*/
 
 int main(void)
 {
-    // LinkList list;
+    LinkList test;
+    LNode *p;
 
-    // ListMaker(list); //构造测试用例
-
-    // SortlinkList(list);
-
-    // DeleteNodeBetweenLH(list, 3,7);
-
-    // LinkListOrderByInc(list);
-
-    // LinkList B;
-    // SplitTheList(list,B);
-
-    // DeleteTheSameNode(list);
-
-    // LNode *p = list->next;
-    // while (p != NULL)
-    // {
-    //     printf(" %d ", p->data);
-    //     p = p->next;
-    // }
-
-    LinkList A;
-    LinkList B;
-
-    ListMaker(A);
-    ListMaker(B);
-
-    MergeAndDESC(A,B);
-
-    A = A->next;
-    while (A != NULL)
+    while (1)
     {
-        printf(" %d ", A->data);
-        A = A->next;
+        ListMaker(test);
+        // DeleteAbsSameElem2(test,10);
+        PartlyReverse(test);
+        
+        p = test->next;
+        while (p != NULL)
+        {
+            printf(" %d ",p->data);
+            p = p->next;
+        }
     }
-} 
+}
